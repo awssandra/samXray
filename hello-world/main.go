@@ -8,8 +8,8 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-xray-sdk-go/xray"
 	"golang.org/x/net/context/ctxhttp"
+	"github.com/aws/aws-xray-sdk-go/xray"
 )
 
 var (
@@ -23,9 +23,9 @@ var (
 	ErrNon200Response = errors.New("Non 200 Response found")
 )
 
-func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	ctx, seg := xray.BeginSubsegment(context.Background(), "checkip.amazonaws.com")
-	resp, err := ctxhttp.Get(ctx, xray.Client(nil), DefaultHTTPGetAddress)
+func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	ctx, seg := xray.BeginSubsegment(ctx, "checkip.amazonaws.com")
+	resp, err := ctxhttp.Get(ctx, xray.Client(nil), "https://aws.amazon.com/")
 	seg.Close(nil)
 
 	if resp.StatusCode != 200 {
